@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 scala> val sfRDD = sc.textFile("file:///home/bigdata/share/spark/sfpd.csv")
 sfRDD: org.apache.spark.rdd.RDD[String] = file:///home/bigdata/share/spark/sfpd.csv MapPartitionsRDD[13] at textFile at <console>:27
 
@@ -66,3 +67,73 @@ scala> val CommonCrimes = sfpd.map(incident =>(incident(crime), 1))
 scala> val countCrimes = 
 
 
+=======
+scala> val sfRDD = sc.textFile("file:///home/bigdata/share/spark/sfpd.csv")
+sfRDD: org.apache.spark.rdd.RDD[String] = file:///home/bigdata/share/spark/sfpd.csv MapPartitionsRDD[13] at textFile at <console>:27
+
+scala> val IncNo = 0
+IncNo: Int = 0
+
+scala> val crime = 1
+crime: Int = 1
+
+scala> val description =2
+description: Int = 2
+
+scala> val dayofweek = 3
+dayofweek: Int = 3
+
+scala> val date = 4
+date: Int = 4
+
+scala> val time = 5
+time: Int = 5
+
+scala> val puDist = 6
+puDist: Int = 6
+
+scala> val res = 7 
+res: Int = 7
+
+scala> val address = 8 
+address: Int = 8
+
+scala> val x = 9 
+x: Int = 9
+
+scala> val y = 10 
+y: Int = 10
+
+scala> val sfpd = sc.textFile("file:///home/bigdata/share/spark/sfpd.csv").map(line => line.split(","))
+sfpd: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[16] at map at <console>:27
+
+scala> sfpd.first
+res7: Array[String] = Array(150599321, OTHER_OFFENSES, POSSESSION_OF_BURGLARY_TOOLS, Thursday, 7/9/15, 23:45, CENTRAL, ARREST/BOOKED, JACKSON_ST/POWELL_ST, -122.4099006, 37.79561712, 15059900000000)
+
+scala> sfpd.count
+res8: Long = 383775
+
+scala> val categories = sfpd.map(inc => inc(crime)).distinct().collect()
+categories: Array[String] = Array(PROSTITUTION, DRUG/NARCOTIC, EMBEZZLEMENT, FRAUD, WEAPON_LAWS, BURGLARY, EXTORTION, WARRANTS, DRIVING_UNDER_THE_INFLUENCE, TREA, LARCENY/THEFT, BAD CHECKS, RECOVERED_VEHICLE, LIQUOR_LAWS, SUICIDE, OTHER_OFFENSES, VEHICLE_THEFT, DRUNKENNESS, MISSING_PERSON, DISORDERLY_CONDUCT, FAMILY_OFFENSES, ARSON, ROBBERY, SUSPICIOUS_OCC, GAMBLING, KIDNAPPING, RUNAWAY, VANDALISM, BRIBERY, NON-CRIMINAL, SECONDARY_CODES, SEX_OFFENSES/NON_FORCIBLE, PORNOGRAPHY/OBSCENE MAT, SEX_OFFENSES/FORCIBLE, FORGERY/COUNTERFEITING, TRESPASS, ASSAULT, LOITERING, STOLEN_PROPERTY)
+
+
+scala> val incidentCategory = sfpd.map(incident =>(incident(crime), 1))
+incidentCategory: org.apache.spark.rdd.RDD[(String, Int)] = MapPartitionsRDD[21] at map at <console>:31
+
+
+scala> val incidentbyAddress = sfpd.map(incident =>(incident(address),1))
+
+scala> incidentbyAddress.first
+
+scala> val totAddress = incidentbyAddress.reduceByKey((x,y) => x+y).map(x => (x._2,x._1))
+
+scala> totAddress.first
+
+scala> val high5 = totAddress.sortByKey(false).take(5)
+
+scala> val CommonCrimes = sfpd.map(incident =>(incident(crime), 1))
+
+scala> val countCrimes = 
+
+
+>>>>>>> f0f4797dcf1572585958f8474c14692d1bedfcec
