@@ -1,0 +1,29 @@
+scala> val addcat = sc.textFile("file:///home/bigdata/share/spark/AddCat.csv")
+addcat: org.apache.spark.rdd.RDD[String] = file:///home/bigdata/share/spark/AddCat.csv MapPartitionsRDD[7] at textFile at <console>:27
+
+scala> val addcatMAP = addcat.map(eachLine => eachLine.split(","))
+addcatMAP: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[8] at map at <console>:29
+
+scala> val cat = 0;
+cat: Int = 0
+
+scala> val address = 1;
+address: Int = 1
+
+scala> val adddist = sc.textFile("file:///home/bigdata/share/spark/AddDist.csv")
+adddist: org.apache.spark.rdd.RDD[String] = file:///home/bigdata/share/spark/AddDist.csv MapPartitionsRDD[10] at textFile at <console>:27
+
+scala> val adddistMAP = adddist.map(eachLine => eachLine.split(","))
+adddistMAP: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[11] at map at <console>:2
+
+scala> val dist = 0;
+dist: Int = 0
+
+scala> val distaddress = 1;
+distaddress: Int = 1
+
+
+
+
+
+

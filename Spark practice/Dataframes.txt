@@ -1,0 +1,138 @@
+
+Dataframe is an abstraction in SparkSQL
+SparkSQL - gives SQL interface
+
+###### Exercises Part 1 ####
+
+val data = Array("coffee 45", "coffee 20", "coffee 32", "tea 31", "tea 15", "tea 29")
+val rdd = sc.parallelize(data).map(s => s.split(" "))
+val d1 = rdd.map(x => (x(0), ((x(1).toFloat),1)))
+d1.collect()
+val d2 = d1.reduceByKey((t1, t2) => (t1._1 + t2._1, t1._2 + t2._2))
+d2.collect()
+val d3 = d2.map(t => (t._1, (t._2._1 / t._2._2)))
+d3.collect()
+
+case class Drink(drink: String, Age: Int)
+val prefDrink = rdd.map(pref => Drink(pref(0), pref(1).toInt))
+val drinkDF = prefDrink.toDF()
+drinkDF.registerTempTable("prefDrink")
+drinkDF.show()
+drinkDF.printSchema()
+val drinkAvg = sqlContext.sql("SELECT drink, avg(Age) AS avg_age FROM prefDrink GROUP BY drink ORDER BY avg_age DESC")
+drinkAvg.show()
+
+######## Exercise Part 2 #####
+
+scala> val sqlContext = new org.apache.spark.sql.SQLContext(sc)
+sqlContext: org.apache.spark.sql.SQLContext = org.apache.spark.sql.SQLContext@10d8bc41
+
+// placeholder to get all the imports in the library 
+scala> import sqlContext.implicits._
+import sqlContext.implicits._
+
+
+val auctionRDD = sc.textFile("file:///home/bigdata/share/spark/auctiondata.csv")
+
+val auctionRDDMAP = auctionRDD.map(eachLine => eachLine.split(","))
+
+case class Auction(auctionid: String, bid: Float, bidtime: Float, bidder: String, bidderRate: Int, openid: Float, finprice: Float, itemtype: String, dtl: Int)
+
+val auctions = auctionRDDMAP.map(a => Auction(a(0), a(1).toFloat, a(2).toFloat, a(3), a(4).toInt, a(5).toFloat, a(6).toFloat, a(7), a(8).toInt))
+
+val auctionDF = auctions.toDF()
+
+auctionDF.registerTempTable("auctions")
+auctionDF.show()
+scala> auctionDF.printSchema()
+root
+ |-- auctionid: string (nullable = true)
+ |-- bid: float (nullable = false)
+ |-- bidtime: float (nullable = false)
+ |-- bidder: string (nullable = true)
+ |-- bidderRate: integer (nullable = false)
+ |-- openbid: float (nullable = false)
+ |-- finprice: float (nullable = false)
+ |-- itemtype: string (nullable = true)
+ |-- dtl: integer (nullable = false)
+ 
+scala> auctionDF.columns
+res6: Array[String] = Array(auctionid, bid, bidtime, bidder, bidderRate, openbid, finprice, itemtype, dtl)
+
+scala> auctionDF.count()
+res7: Long = 10654
+
+scala> auctionDF.select("auctionid").distinct().count()
+res8: Long = 627 
+
+scala> auctionDF.groupBy("itemtype","auctionid").count().show()
+auctionDF.groupBy("itemtype","bid").count().show()
++--------+----------+-----+
+|itemtype| auctionid|count|
++--------+----------+-----+
+|    xbox|8213472092|    3|
+|    xbox|8212236671|   43|
+| cartier|1640179146|   22|
+|    palm|3024854454|    5|
+|    palm|3025373736|   15|
+
+
+scala> auctionDF.filter(auctionDF("finprice")>200).count()
+res11: Long = 7685
+
+scala> val top5bidders = sqlContext.sql("SELECT bidder, avg(bid) AS avg_bid FROM auctions GROUP BY bidder ORDER BY avg_bid DESC LIMIT 5")
+top5bidders: org.apache.spark.sql.DataFrame = [bidder: string, avg_bid: double]
+
+scala> top5bidders.show()
++-------------------+-------+                                                   
+|             bidder|avg_bid|
++-------------------+-------+
+|           esmodeus| 5300.0|
+|            akapson| 5200.0|
+|sirocco@prodigy.net| 3250.0|
+|          nelsoncpm| 3028.0|
+| justine@701701.com| 3000.0|
++-------------------+-------+
+
+scala> val maxBids = sqlContext.sql("SELECT bidder, itemtype, count(bid) AS count_bids FROM auctions GROUP BY bidder, itemtype ORDER BY count_bids DESC LIMIT 5")
+
+#val avgbids = sqlContext.sql("SELECT bidder, itemtype avg(bid) AS avg_bid FROM auctions GROUP BY bidder, itemtype ORDER BY avg_bid DESC LIMIT 5")
+
+#SELECT itemtype, avg(bid) FROM auctions GROUP BY itemtype 
+
+### 7 #### val test = sqlContext.sql("SELECT itemtype, avg(bid) FROM auctions GROUP BY itemtype")
+
+val priceMin = sqlContext.sql("SELECT * FROM auctions where finprice < 30 ").show()
+val MinPCount = sqlContext.sql("SELECT * FROM auctions where finprice < 30 ")
+val finishedAuc = sqlContext.sql("SELECT min(finprice) as Min_finPrice FROM auctions ").show()
+MinPCount.count()
+val cheapItem = sqlContext.sql("SELECT auctionid, itemtype, finprice FROM auctions ORDER BY finprice ASC").show()
+
+val xbox = sqlContext.sql("SELECT * FROM auctions where itemtype = 'xbox' ")
+xbox.show()
+val cartier = sqlContext.sql("SELECT * FROM auctions where itemtype = 'cartier' ")
+cartier.show()
+val palm = sqlContext.sql("SELECT * FROM auctions where itemtype = 'palm' ")
+
+###### What is the maximum,minimum and average final price for each of these DataFrames- what do you notice?
+
+xbox.select(avg("finprice")).show()
+xbox.select(min("finprice")).show()
+xbox.select(max("finprice")).show()
+
+cartier.select(avg("finprice")).show()
+cartier.select(min("finprice")).show()
+cartier.select(max("finprice")).show()
+
+palm.select(max("finprice")).show()
+palm.select(min("finprice")).show()
+palm.select(avg("finprice")).show()
+
+
+
+
+
+
+
+
+

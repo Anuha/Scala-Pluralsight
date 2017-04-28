@@ -1,0 +1,31 @@
+#### How many incidents are there?
+val NumInc = sqlContext.sql("SELECT count(IncNo) as Num_of_incidents FROM sf").show() 
+NumInc.show()
+
+#### How many categories are there? What are they?
+val NumCat = sqlContext.sql("SELECT DISTINCT crime FROM sf GROUP BY crime").count()
+val ViewCat = sqlContext.sql("SELECT DISTINCT crime FROM sf GROUP BY crime").show()
+
+### How many PD Districts are there? 
+sqlContext.sql("SELECT DISTINCT puDist FROM sf").count()
+
+### What are the different districts  
+sqlContext.sql("SELECT DISTINCT puDist FROM sf").show()
+
+### How many incidents were there in Richmond district?
+val Rich = sqlContext.sql("SELECT count(IncNo) FROM sf WHERE puDist = 'Richmond' ").show()
+
+### How does this compare to other districts?
+val RichvsAll = sqlContext.sql("SELECT puDist,count(IncNo) AS incidents_in_Rich FROM sf GROUP BY puDist ").show()
+
+### How many incidents are thare per category?
+val IncperCat = sqlContext.sql("SELECT crime, count(IncNo) AS num_of_incidents FROM sf GROUP BY crimes").show()
+
+### How many different resolutions are there in each district? 
+val resDist = sqlContext.sql("SELECT puDist, count(DISTINCT res) FROM sf GROUP BY puDist").show()
+
+### Which is the most popular day for committing crimes?
+val popularDay = sqlContext.sql("SELECT dayofweek, count(crime) FROM sf GROUP BY dayofweek").show()
+
+### How does this vary by each crime type?
+sqlContext.sql("SELECT dayofweek, count(DISTINCT crime) FROM sf GROUP BY dayofweek").show()

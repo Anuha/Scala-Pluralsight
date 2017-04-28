@@ -1,0 +1,70 @@
+scala> val sfRDD = sc.textFile("file:///home/bigdata/share/spark/sfpd.csv")
+sfRDD: org.apache.spark.rdd.RDD[String] = file:///home/bigdata/share/spark/sfpd.csv MapPartitionsRDD[13] at textFile at <console>:27
+
+scala> val IncNo = 0
+IncNo: Int = 0
+
+scala> val crime = 1
+crime: Int = 1
+
+scala> val description =2
+description: Int = 2
+
+scala> val dayofweek = 3
+dayofweek: Int = 3
+
+scala> val date = 4
+date: Int = 4
+
+scala> val time = 5
+time: Int = 5
+
+scala> val puDist = 6
+puDist: Int = 6
+
+scala> val res = 7 
+res: Int = 7
+
+scala> val address = 8 
+address: Int = 8
+
+scala> val x = 9 
+x: Int = 9
+
+scala> val y = 10 
+y: Int = 10
+
+scala> val sfpd = sc.textFile("file:///home/bigdata/share/spark/sfpd.csv").map(line => line.split(","))
+sfpd: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[16] at map at <console>:27
+
+case class SanFran(IncNo: String, crime: String, description: String, dayofweek: String, 
+date: String, time: String, puDist: String, res: String, address: String, x: Float, y: Float)
+
+val sf = sfpd.map(s => SanFran(s(0), s(1), s(2), s(3), s(4), s(5), s(6), s(7), s(8), s(9).toFloat,s(10).toFloat))
+
+val sanfranDF = sf.toDF()
+
+sanfranDF.registerTempTable("sf")
+
+sanfranDF.show()
+
+sanfranDF.count()
+
+sanfranDF.printSchema()
+
+###### What are the top 5 districts with the most number of incidents?
+### SQL #### 
+val top5Dist = sqlContext.sql("SELECT puDist, count(IncNo) as number_of_incidents FROM sf GROUP BY puDist ORDER BY number_of_incidents DESC LIMIT 5")
+top5Dist.show()
+
+###### What are the top 10 resolutions to incidents?
+### SQL ###
+val top10Res = sqlContext.sql("SELECT res, count(IncNo) as incidents FROM sf GROUP BY res ORDER BY incidents DESC LIMIT 10")
+top10Res.show()
+
+###### What are the top 3 categories of incidents?
+### SQL ###
+val top3Inc = sqlContext.sql("SELECT crime, count(IncNo) as incidents FROM sf GROUP BY crime ORDER BY incidents DESC LIMIT 3") 
+
+top3Inc.write.json("file:///home/bigdata/results.json")
+

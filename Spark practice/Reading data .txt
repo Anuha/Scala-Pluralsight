@@ -1,0 +1,90 @@
+scala> val auctionRDD = sc.textFile("file:///home/bigdata/share/spark/auctiondata.csv")
+auctionRDD: org.apache.spark.rdd.RDD[String] = file:///home/bigdata/share/spark/auctiondata.csv MapPartitionsRDD[1] at textFile at <console>:27
+
+scala> auctionRDD.first
+res1: String = 8213034705,95,2.927373,jake7870,0,95,117.5,xbox,3
+
+scala> val auctionRDDMAP = auctionRDD.map(eachLine => eachLine.split(","))
+auctionRDDMAP: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[2] at map at <console>:29
+
+scala> auctionRDDMAP.first
+res2: Array[String] = Array(8213034705, 95, 2.927373, jake7870, 0, 95, 117.5, xbox, 3)
+
+scala> auctionRDDMAP.take(5)
+res3: Array[Array[String]] = Array(Array(8213034705, 95, 2.927373, jake7870, 0, 95, 117.5, xbox, 3), Array(8213034705, 115, 2.943484, davidbresler2, 1, 95, 117.5, xbox, 3), Array(8213034705, 100, 2.951285, gladimacowgirl, 58, 95, 117.5, xbox, 3), Array(8213034705, 117.5, 2.998947, daysrus, 10, 95, 117.5, xbox, 3), Array(8213060420, 2, 0.065266, donnie4814, 5, 1, 120, xbox, 3))
+
+scala> auctionRDDMAP.count
+res4: Long = 10654
+
+scala> val auctionid = 0;
+auctionid: Int = 0
+
+scala> val bid = 1;
+bid: Int = 1
+
+scala> val bidtime = 2;
+bidtime: Int = 2
+
+scala> val bidder = 3;
+bidder: Int = 3
+
+scala> val bidderRate = 4
+bidderRate: Int = 4
+
+scala> val openbid = 5;
+openbid: Int = 5
+
+scala> val price = 6;
+price: Int = 6
+
+scala> val itemtype = 7;
+itemtype: Int = 7
+
+scala> val daystolive = 8;
+daystolive: Int = 8
+
+scala> val auctionRDD = sc.textFile("file:///home/bigdata/share/spark/auctiondata.csv")
+auctionRDD: org.apache.spark.rdd.RDD[String] = file:///home/bigdata/share/spark/auctiondata.csv MapPartitionsRDD[4] at textFile at <console>:27
+
+scala> val auctionRDDMAP = auctionRDD.map(eachLine => eachLine.split(","))
+auctionRDDMAP: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[5] at map at <console>:29
+
+scala> auctionRDDMAP.first
+res5: Array[String] = Array(8213034705, 95, 2.927373, jake7870, 0, 95, 117.5, xbox, 3)
+
+scala> auctionRDDMAP.take(2)
+res6: Array[Array[String]] = Array(Array(8213034705, 95, 2.927373, jake7870, 0, 95, 117.5, xbox, 3), Array(8213034705, 115, 2.943484, davidbresler2, 1, 95, 117.5, xbox, 3
+
+scala> val auctionRDD = sc.textFile("file:///home/bigdata/share/spark/auctiondata.csv")
+auctionRDD: org.apache.spark.rdd.RDD[String] = file:///home/bigdata/share/spark/auctiondata.csv MapPartitionsRDD[4] at textFile at <console>:27
+
+scala> val auctionRDDMAP = auctionRDD.map(eachLine => eachLine.split(","))
+auctionRDDMAP: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[5] at map at <console>:29
+
+scala> auctionRDDMAP.first
+res5: Array[String] = Array(8213034705, 95, 2.927373, jake7870, 0, 95, 117.5, xbox, 3)
+
+scala> auctionRDDMAP.take(2)
+res6: Array[Array[String]] = Array(Array(8213034705, 95, 2.927373, jake7870, 0, 95, 117.5, xbox, 3), Array(8213034705, 115, 2.943484, davidbresler2, 1, 95, 117.5, xbox, 3
+
+scala> val a = auctionRDDMAP.map(bid => bid(auctionid))
+a: org.apache.spark.rdd.RDD[String] = MapPartitionsRDD[6] at map at <console>:35
+
+scala> val b = a.distinct
+b: org.apache.spark.rdd.RDD[String] = MapPartitionsRDD[9] at distinct at <console>:37
+
+scala> a.take(10)
+res10: Array[String] = Array(8213034705, 8213034705, 8213034705, 8213034705, 8213060420, 8213060420, 8213060420, 8213060420, 8213060420, 8213060420)
+
+scala> b.count
+count                 countApprox           countApproxDistinct   countByValue          countByValueApprox    
+
+scala> b.count
+res11: Long = 627
+
+scala> itemtype
+res13: Int = 7
+
+scala> auctionRDDMAP.map(bid => (bid(itemtype), 1)).reduceByKey((x,y) => x+y).collect()
+res14: Array[(String, Int)] = Array((palm,5917), (cartier,1953), (xbox,2784))
+
